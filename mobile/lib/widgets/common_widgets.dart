@@ -101,10 +101,11 @@ class StatChip extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-              fontSize: 24,
+              fontSize: 26,
               fontWeight: FontWeight.w900,
               color: AppTheme.textPrimary,
-              letterSpacing: -1,
+              letterSpacing: -0.5,
+              height: 1.1,
             ),
           ),
         ],

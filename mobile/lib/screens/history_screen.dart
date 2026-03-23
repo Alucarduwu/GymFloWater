@@ -65,7 +65,7 @@ class HistoryScreen extends StatelessWidget {
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(w.name, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-                  Text(DateFormat('dd MMMM yyyy • HH:mm', 'es').format(w.date).toUpperCase(), style: const TextStyle(color: AppTheme.textSecondary, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1)),
+                  Text(DateFormat('dd MMMM yyyy • HH:mm', 'es').format(w.date).toUpperCase(), style: const TextStyle(color: Colors.white70, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1)),
                 ]),
               ),
             ],
@@ -76,7 +76,7 @@ class HistoryScreen extends StatelessWidget {
               children: [
                 _miniStat(Icons.fitness_center_rounded, '${w.exercises.length} EJ.'),
                 const SizedBox(width: 16),
-                _miniStat(Icons.trending_up_rounded, '${(w.totalVolume / 1000).toStringAsFixed(1)}k KG'),
+                _miniStat(Icons.trending_up_rounded, '${(w.totalVolume).toStringAsFixed(1)} KG'),
               ],
             ),
           ),
@@ -141,7 +141,7 @@ class HistoryScreen extends StatelessWidget {
       children: [
         Icon(icon, size: 12, color: AppTheme.accent.withOpacity(0.5)),
         const SizedBox(width: 6),
-        Text(label, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
+        Text(label, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
       ],
     );
   }

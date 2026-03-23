@@ -11,8 +11,9 @@ import '../widgets/common_widgets.dart';
 
 class WorkoutLoggerScreen extends StatefulWidget {
   final Routine? routine;
+  final Workout? initialWorkout;
 
-  const WorkoutLoggerScreen({super.key, this.routine});
+  const WorkoutLoggerScreen({super.key, this.routine, this.initialWorkout});
 
   @override
   State<WorkoutLoggerScreen> createState() => _WorkoutLoggerScreenState();
@@ -26,30 +27,53 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
   int _elapsedSeconds = 0;
   Timer? _timer;
   
-  // Rest Timer
+
   int _restSeconds = 0;
   Timer? _restTimer;
   bool _showRestTimer = false;
 
+  String? _workoutIdToEdit;
+  DateTime? _workoutDateToEdit;
+
   @override
   void initState() {
     super.initState();
-    _name = widget.routine?.name ?? 'Nuevo Entrenamiento';
-    
-    if (widget.routine != null) {
-      for (var re in widget.routine!.exercises) {
+    if (widget.initialWorkout != null) {
+      _name = widget.initialWorkout!.name;
+      _workoutIdToEdit = widget.initialWorkout!.id;
+      _workoutDateToEdit = widget.initialWorkout!.date;
+      _elapsedSeconds = widget.initialWorkout!.duration;
+      for (var re in widget.initialWorkout!.exercises) {
         _exercises.add(Exercise(
-          id: _uuid.v4(),
+          id: re.id,
           name: re.name,
           muscleGroup: re.muscleGroup,
           sets: re.sets.map((rs) => WorkoutSet(
-            id: _uuid.v4(),
-            weight: 0.0, // Weight is entered during workout
-            reps: rs.reps, // Default target reps from routine
+            id: rs.id,
+            weight: rs.weight,
+            reps: rs.reps,
             type: rs.type,
-            completed: false,
+            completed: rs.completed,
           )).toList(),
         ));
+      }
+    } else {
+      _name = widget.routine?.name ?? 'Nuevo Entrenamiento';
+      if (widget.routine != null) {
+        for (var re in widget.routine!.exercises) {
+          _exercises.add(Exercise(
+            id: _uuid.v4(),
+            name: re.name,
+            muscleGroup: re.muscleGroup,
+            sets: re.sets.map((rs) => WorkoutSet(
+              id: _uuid.v4(),
+              weight: 0.0,
+              reps: rs.reps,
+              type: rs.type,
+              completed: false,
+            )).toList(),
+          ));
+        }
       }
     }
 
@@ -91,8 +115,8 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
     if (_exercises.isEmpty) return;
     
     final workout = Workout(
-      id: _uuid.v4(),
-      date: DateTime.now(),
+      id: _workoutIdToEdit ?? _uuid.v4(),
+      date: _workoutDateToEdit ?? DateTime.now(),
       name: _name,
       exercises: _exercises,
       duration: _elapsedSeconds,
@@ -161,34 +185,15 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
                 sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      if (index == _exercises.length) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              setState(() {
-                                _exercises.add(Exercise(
-                                  id: _uuid.v4(),
-                                  name: 'Nuevo Ejercicio',
-                                  muscleGroup: 'Varios',
-                                  sets: [WorkoutSet(id: _uuid.v4(), weight: 0, reps: 0)],
-                                ));
-                              });
-                            },
-                            icon: const Icon(Icons.add, size: 18),
-                            label: const Text('AÑADIR EJERCICIO EXTRA'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.white.withOpacity(0.04),
-                              side: BorderSide(color: AppTheme.white.withOpacity(0.05)),
-                            ),
-                          ),
-                        );
-                      }
-                      return _buildExerciseCard(_exercises[index], index);
-                    },
-                    childCount: _exercises.length + 1,
+                  delegate: SliverChildListDelegate(
+                    [
+                      ..._exercises.asMap().entries.map((e) => _buildExerciseCard(e.value, e.key)),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: _finishWorkout,
+                        child: Text(widget.initialWorkout != null ? 'GUARDAR CAMBIOS' : 'GUARDAR Y FINALIZAR'),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -218,7 +223,13 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(ex.name, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.white)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(ex.name, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.white)),
+                        Text('% ${ex.totalVolume.toStringAsFixed(1)} kg (Promedio)', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 10, color: AppTheme.accent)),
+                      ],
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.more_vert_rounded, color: AppTheme.textSecondary, size: 18),
@@ -241,24 +252,7 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
               ),
             ),
             ...ex.sets.asMap().entries.map((sEntry) => _buildSetRow(ex, exIdx, sEntry.key, sEntry.value)),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: TextButton.icon(
-                onPressed: () {
-                  setState(() {
-                    ex.sets.add(WorkoutSet(
-                      id: _uuid.v4(),
-                      weight: ex.sets.isEmpty ? 0 : ex.sets.last.weight,
-                      reps: ex.sets.isEmpty ? 10 : ex.sets.last.reps,
-                      type: 'Normal',
-                    ));
-                  });
-                },
-                icon: const Icon(Icons.add, size: 12),
-                label: const Text('AÑADIR SERIE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                style: TextButton.styleFrom(foregroundColor: AppTheme.accent),
-              ),
-            ),
+            const SizedBox(height: 12),
           ],
         ),
       ),
@@ -282,22 +276,26 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
             flex: 2,
             child: _buildInput(
               initialValue: set.weight == 0 ? '' : set.weight.toString(),
-              onChanged: (val) => set.weight = double.tryParse(val) ?? 0,
+              onChanged: (val) {
+                set.weight = double.tryParse(val) ?? 0;
+                if (set.weight > 0) set.completed = true;
+              },
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
             flex: 2,
-            child: _buildInput(
-              initialValue: set.reps == 0 ? '' : set.reps.toString(),
-              onChanged: (val) => set.reps = int.tryParse(val) ?? 0,
+            child: Center(
+              child: Text('${set.reps}', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
             ),
           ),
           const SizedBox(width: 8),
           GestureDetector(
             onTap: () {
               setState(() => set.completed = !set.completed);
-              if (set.completed) _startRestTimer();
+              if (set.completed) {
+                _startRestTimer();
+              }
             },
             child: Container(
               width: 36,
@@ -333,7 +331,7 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
         ),
         onChanged: (val) {
           onChanged(val);
-          setState(() {}); // Update total volume
+          setState(() {}); 
         },
       ),
     );

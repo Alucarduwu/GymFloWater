@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../theme/app_theme.dart';
-import '../providers/gym_provider.dart';
-import '../widgets/common_widgets.dart';
-import 'dashboard_screen.dart';
-import 'routine_manager_screen.dart';
-import 'workout_logger_screen.dart';
-import 'statistics_screen.dart';
-import 'history_screen.dart';
-import 'exercise_progress_screen.dart';
+import 'package:gymflow/providers/gym_provider.dart';
+import 'package:gymflow/theme/app_theme.dart';
+import 'package:gymflow/widgets/common_widgets.dart';
+import 'package:gymflow/screens/dashboard_screen.dart';
+import 'package:gymflow/screens/routine_manager_screen.dart';
+import 'package:gymflow/screens/workout_logger_screen.dart';
+import 'package:gymflow/screens/statistics_screen.dart';
+import 'package:gymflow/screens/history_screen.dart';
+import 'package:gymflow/screens/exercise_progress_screen.dart';
+import 'package:gymflow/screens/routine_editor_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -37,7 +38,7 @@ class _MainNavigationState extends State<MainNavigation> {
             index: _currentIndex,
             children: _screens,
           ),
-          _buildBottomNav(),
+          _buildBottomNav(context),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -48,15 +49,16 @@ class _MainNavigationState extends State<MainNavigation> {
           backgroundColor: AppTheme.accent,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: const Icon(Icons.add_rounded, size: 36, color: Colors.white),
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WorkoutLoggerScreen())),
+          onPressed: () => _showRoutineSelector(context, context.read<GymProvider>()),
         ),
       ),
     );
   }
 
-  Widget _buildBottomNav() {
+  Widget _buildBottomNav(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     return Positioned(
-      bottom: 24,
+      bottom: bottomPadding > 0 ? bottomPadding : 16,
       left: 16,
       right: 16,
       child: ClipRRect(
@@ -66,13 +68,13 @@ class _MainNavigationState extends State<MainNavigation> {
           borderRadius: 32,
           borderColor: AppTheme.white.withOpacity(0.05),
           child: SizedBox(
-            height: 48,
+            height: 64,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _navItem(0, Icons.dashboard_rounded, 'INICIO'),
                 _navItem(1, Icons.list_alt_rounded, 'RUTINAS'),
-                const SizedBox(width: 56),
+                const SizedBox(width: 64),
                 _navItem(2, Icons.bar_chart_rounded, 'STATS'),
                 _navItem(3, Icons.person_rounded, 'PERFIL'),
               ],
@@ -108,6 +110,51 @@ class _MainNavigationState extends State<MainNavigation> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showRoutineSelector(BuildContext context, GymProvider gym) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.surfaceElevated,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(24),
+                child: Text('¿QUÉ VAMOS A ENTRENAR HOY?', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+              ),
+              if (gym.routines.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text('No tienes rutinas creadas', style: TextStyle(color: AppTheme.textSecondary)),
+                )
+              else
+                ...gym.routines.map((r) => ListTile(
+                  title: Text(r.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                  subtitle: Text('${r.exercises.length} ejercicios', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppTheme.accent),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => WorkoutLoggerScreen(routine: r)));
+                  },
+                )),
+              const Divider(color: Colors.white12),
+              ListTile(
+                leading: const Icon(Icons.add_rounded, color: AppTheme.accent),
+                title: const Text('CREAR NUEVA RUTINA', style: TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => RoutineEditorScreen()));
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -258,10 +305,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen())),
-                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.surfaceElevated, minimumSize: const Size(double.infinity, 56)),
-                  child: const Text('HISTORIAL DE ENTRENAMIENTOS'),
+                GestureDetector(
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen())),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: AppTheme.white.withOpacity(0.03),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: AppTheme.white.withOpacity(0.1)),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.history_rounded, color: AppTheme.accent),
+                            SizedBox(width: 16),
+                            Text(
+                              'HISTORIAL DE ENTRENAMIENTOS',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 13,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Icon(Icons.arrow_forward_ios_rounded, color: AppTheme.textSecondary, size: 14),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 40),
                 const SectionTitle(title: 'RÉCORDS PERSONALES (MAX KG)'),

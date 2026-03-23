@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color background = Color(0xFF010409);
-  static const Color surface = Color(0xFF0D1117);
-  static const Color surfaceElevated = Color(0xFF161B22);
-  static const Color accent = Color(0xFF3B82F6);
-  static const Color accentLight = Color(0xFF60A5FA);
-  static const Color accentDark = Color(0xFF1D4ED8);
-  static const Color success = Color(0xFF10B981);
-  static const Color danger = Color(0xFFEF4444);
+  static const Color background = Color(0xFF010204);
+  static const Color surface = Color(0xFF0D0D12);
+  static const Color surfaceElevated = Color(0xFF1A1A24);
+  static const Color accent = Color(0xFF00F2FF); // Neon Cyan
+  static const Color accentSecondary = Color(0xFFBC00FF); // Neon Purple
+  static const Color accentLight = Color(0xFF70F9FF);
+  static const Color accentDark = Color(0xFF00B8C4);
+  static const Color success = Color(0xFF00FF9D);
+  static const Color danger = Color(0xFFFF2D55);
   static const Color textPrimary = Color(0xFFFFFFFF);
   static const Color textSecondary = Color(0xFF8B949E);
   static const Color border = Color(0xFF21262D);
@@ -22,6 +23,7 @@ class AppTheme {
         scaffoldBackgroundColor: background,
         colorScheme: const ColorScheme.dark(
           primary: accent,
+          secondary: accentSecondary,
           surface: surface,
           onSurface: textPrimary,
         ),
@@ -40,13 +42,15 @@ class AppTheme {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: accent,
-            foregroundColor: Colors.white,
+            foregroundColor: Color(0xFF010204), // Dark text on neon button
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14)),
+                borderRadius: BorderRadius.circular(16)),
             padding:
-                const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             textStyle: GoogleFonts.inter(
-                fontWeight: FontWeight.w700, letterSpacing: 0.5),
+                fontWeight: FontWeight.w900, letterSpacing: 1.0),
+            elevation: 8,
+            shadowColor: accent.withOpacity(0.5),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(

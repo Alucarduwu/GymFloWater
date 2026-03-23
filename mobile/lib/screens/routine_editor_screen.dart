@@ -23,7 +23,7 @@ class _RoutineEditorScreenState extends State<RoutineEditorScreen> {
   late List<int> _daysOfWeek;
 
   final List<String> _days = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-  final List<String> _setTypes = ['Normal', 'Calentamiento', 'Drop Set', 'Fallo'];
+  final List<String> _setTypes = ['Normal', 'Calentamiento', 'Aproximación', 'Biserie', 'Triserie', 'Drop Set', 'Fallo', 'Rest-Pause', 'Descarga Biomecánica', 'Isométrica', 'Excéntrica'];
 
   @override
   void initState() {
@@ -47,74 +47,101 @@ class _RoutineEditorScreenState extends State<RoutineEditorScreen> {
 
   void _addExercise() {
     final gym = context.read<GymProvider>();
-    final lib = gym.libraryExercises;
+    final allLib = gym.libraryExercises;
+    String searchQuery = '';
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.7,
-          decoration: const BoxDecoration(
-            color: AppTheme.background,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: AppTheme.white.withOpacity(0.1), borderRadius: BorderRadius.circular(2))),
-              const Padding(
-                padding: EdgeInsets.all(24),
-                child: Text('ELIGE UN EJERCICIO', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: 1)),
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final filteredLib = allLib.where((e) => 
+              e.name.toLowerCase().contains(searchQuery.toLowerCase()) || 
+              e.muscleGroup.toLowerCase().contains(searchQuery.toLowerCase()) ||
+              e.category.toLowerCase().contains(searchQuery.toLowerCase())
+            ).toList();
+
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.85,
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              decoration: const BoxDecoration(
+                color: AppTheme.background,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
               ),
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: lib.length,
-                  itemBuilder: (context, index) {
-                    final ex = lib[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _exercises.add(RoutineExercise(
-                              id: _uuid.v4(),
-                              name: ex.name,
-                              muscleGroup: ex.muscleGroup,
-                              category: ex.category,
-                              sets: [RoutineSet(reps: 10, type: 'Normal')],
-                            ));
-                          });
-                          Navigator.pop(context);
-                        },
-                        child: GlassCard(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 40, height: 40,
-                                decoration: BoxDecoration(color: AppTheme.accent.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-                                child: const Icon(Icons.add_rounded, color: AppTheme.accent, size: 20),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                  Text(ex.name, style: const TextStyle(fontWeight: FontWeight.w800)),
-                                  Text(ex.muscleGroup.toUpperCase(), style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w900, color: AppTheme.accent, letterSpacing: 1)),
-                                ]),
-                              ),
-                            ],
-                          ),
-                        ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 12),
+                  Container(width: 40, height: 4, decoration: BoxDecoration(color: AppTheme.white.withOpacity(0.1), borderRadius: BorderRadius.circular(2))),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(24, 24, 24, 16),
+                    child: Text('ELIGE UN EJERCICIO', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: 1)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    child: TextField(
+                      onChanged: (val) => setModalState(() => searchQuery = val),
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      decoration: InputDecoration(
+                        hintText: 'Buscar...',
+                        prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.accent, size: 20),
+                        filled: true,
+                        fillColor: AppTheme.white.withOpacity(0.04),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                        contentPadding: EdgeInsets.zero,
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      itemCount: filteredLib.length,
+                      itemBuilder: (context, index) {
+                        final ex = filteredLib[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _exercises.add(RoutineExercise(
+                                  id: _uuid.v4(),
+                                  name: ex.name,
+                                  muscleGroup: ex.muscleGroup,
+                                  category: ex.category,
+                                  sets: [RoutineSet(reps: 10, type: 'Normal')],
+                                ));
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: GlassCard(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 40, height: 40,
+                                    decoration: BoxDecoration(color: AppTheme.accent.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                                    child: const Icon(Icons.add_rounded, color: AppTheme.accent, size: 20),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                      Text(ex.name, style: const TextStyle(fontWeight: FontWeight.w800)),
+                                      Text('${ex.category.toUpperCase()} • ${ex.muscleGroup.toUpperCase()}', style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w900, color: AppTheme.accent, letterSpacing: 1)),
+                                    ]),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          }
         );
       },
     );
@@ -150,7 +177,7 @@ class _RoutineEditorScreenState extends State<RoutineEditorScreen> {
                   child: TextField(
                     controller: _nameController,
                     style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
-                    decoration: const InputDecoration(border: InputBorder.none, filled: false, hintText: 'Ej: Empuje Pesado', contentPadding: EdgeInsets.zero),
+                    decoration: const InputDecoration(border: InputBorder.none, filled: false, hintText: 'Nombre de la rutina', contentPadding: EdgeInsets.zero),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -178,9 +205,15 @@ class _RoutineEditorScreenState extends State<RoutineEditorScreen> {
                 const SizedBox(height: 16),
                 ElevatedButton.icon(
                   onPressed: _addExercise,
-                  icon: const Icon(Icons.library_add_rounded, size: 20),
+                  icon: const Icon(Icons.library_add_rounded, size: 24, color: Color(0xFF010204)),
                   label: const Text('AÑADIR DESDE BIBLIOTECA'),
-                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.white.withOpacity(0.04), minimumSize: const Size(double.infinity, 56)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.accent,
+                    foregroundColor: const Color(0xFF010204),
+                    minimumSize: const Size(double.infinity, 64),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    elevation: 0,
+                  ),
                 ),
               ]),
             ),
@@ -205,7 +238,7 @@ class _RoutineEditorScreenState extends State<RoutineEditorScreen> {
                   Text(ex.name, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
                   Text(ex.muscleGroup.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.w900, color: AppTheme.accent, fontSize: 8, letterSpacing: 1)),
                 ])),
-                IconButton(icon: const Icon(Icons.remove_circle_outline_rounded, color: AppTheme.textSecondary.withOpacity(0.3), size: 20), onPressed: () => setState(() => _exercises.removeAt(exIdx))),
+                IconButton(icon: Icon(Icons.remove_circle_outline_rounded, color: AppTheme.textSecondary.withOpacity(0.3), size: 20), onPressed: () => setState(() => _exercises.removeAt(exIdx))),
               ],
             ),
             const SizedBox(height: 16),

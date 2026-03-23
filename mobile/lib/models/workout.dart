@@ -48,7 +48,7 @@ class Exercise {
       : sets.map((s) => s.weight).reduce((a, b) => a > b ? a : b);
 
   double get totalVolume =>
-      sets.fold(0, (sum, s) => sum + (s.weight * s.reps));
+      sets.isEmpty ? 0 : sets.fold(0.0, (sum, s) => sum + s.weight) / sets.length;
 
   Map<String, dynamic> toMap(String workoutId) => {
         'id': id,
@@ -81,7 +81,7 @@ class Workout {
   });
 
   double get totalVolume =>
-      exercises.fold(0.0, (sum, ex) => sum + ex.totalVolume);
+      exercises.isEmpty ? 0 : exercises.fold(0.0, (sum, ex) => sum + ex.totalVolume) / exercises.length;
 
   Map<String, dynamic> toMap() => {
         'id': id,
