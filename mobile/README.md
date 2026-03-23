@@ -1,30 +1,37 @@
 # 🏋️ GymFlow Mobile (Flutter SDK)
 
-[**Español**](#español) | [**English**](#english)
+<div align="center">
+  <p align="center">
+    <img src="https://img.shields.io/badge/Flutter-v3.22+-02569B?style=for-the-badge&logo=flutter&logoColor=white" />
+    <img src="https://img.shields.io/badge/SQLite-Offline--First-003B57?style=for-the-badge&logo=sqlite&logoColor=white" />
+  </p>
+  
+  [**Español**](#español) | [**English**](#english)
+</div>
 
 ---
 
 <a name="español"></a>
-## 🇪🇸 Versión en Español
+## 🇪🇸 Implementación Móvil Nativizada
 
-Esta carpeta contiene la implementación nativa para dispositivos móviles de **GymFlow**. La arquitectura sigue los principios de **Clean Architecture** adaptados para aplicaciones Flutter de alto rendimiento.
+Esta sub-carpeta contiene la lógica de negocio y el sistema de diseño reactivo para dispositivos móviles.
 
-### 🧩 Implementación Técnica
-- **Modelo de Datos**: Utiliza una estructura relacional gestionada por el servicio `DatabaseService` (SQLite).
-- **Lógica de Negocio**: Centralizada en el `GymProvider`, permitiendo una gestión de estado global reactiva.
-- **UI/UX**: Estética de alto contraste con componentes personalizados (`GlassCard`, `StatChip`) optimizados para visibilidad en entornos de gimnasio.
+### 🧪 Arquitectura de Software
+- **Provider Pattern**: Gestión de estado centralizado que desacopla la sincronización de la base de datos de la capa visual.
+- **Relational Mapping**: El `DatabaseService` actúa como un ORM ligero sobre SQLite, garantizando transacciones seguras y rápidas.
+- **Micro-interacciones**: Optimización de hilos secundarios para cálculos de volumen en tiempo real sin bloquear el `Main Thread` (60 FPS estables).
 
 ---
 
 <a name="english"></a>
-## 🇺🇸 English Version
+## 🇺🇸 Native Mobile Implementation
 
-This directory contains the native mobile implementation of **GymFlow**. The architecture follows **Clean Architecture** principles tailored for high-performance Flutter applications.
+This sub-directory contains the business logic and reactive design system for mobile devices.
 
-### 🧩 Technical Implementation
-- **Data Model**: Uses a relational structure managed by the `DatabaseService` (SQLite).
-- **Business Logic**: Centralized within `GymProvider`, enabling reactive global state management.
-- **UI/UX**: High-contrast aesthetic featuring custom components (`GlassCard`, `StatChip`) optimized for visibility in gym environments.
+### 🧪 Software Architecture
+- **Provider Pattern**: Centralized state management that decouples database synchronization from the visual layer.
+- **Relational Mapping**: `DatabaseService` acts as a lightweight ORM over SQLite, ensuring secure and fast transactions.
+- **Micro-interactions**: Secondary thread optimization for real-time volume calculations without blocking the `Main Thread` (stable 60 FPS).
 
 ---
 

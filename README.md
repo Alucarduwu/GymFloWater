@@ -1,48 +1,61 @@
 # 🏋️ GymFlow: High-Performance Strength Tracking System
 
-[**Español**](#español) | [**English**](#english)
+<div align="center">
+  <p align="center">
+    <img src="https://img.shields.io/badge/Flutter-v3.22+-02569B?style=for-the-badge&logo=flutter&logoColor=white" />
+    <img src="https://img.shields.io/badge/Dart-v3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white" />
+    <img src="https://img.shields.io/badge/SQLite-Offline--First-003B57?style=for-the-badge&logo=sqlite&logoColor=white" />
+    <img src="https://img.shields.io/badge/State--Management-Provider-60B5CC?style=for-the-badge" />
+  </p>
+  
+  [**Español**](#español) | [**English**](#english)
+</div>
 
 ---
 
 <a name="español"></a>
-## 🇪🇸 Versión en Español
+## 🇪🇸 Versión en Español: Ingeniería de Entrenamiento
 
-### Descripción General
-**GymFlow** es una arquitectura de software diseñada para el registro analítico y sistemático del entrenamiento de fuerza. Este proyecto prioriza la integridad de los datos (Local-First), la privacidad del usuario y la visualización técnica de métricas de rendimiento.
+### 💎 Filosofía del Proyecto
+**GymFlow** no es solo un registro; es un sistema de gestión de carga diseñado bajo principios de ingeniería de software. El objetivo es proporcionar una herramienta **Local-First** que elimine la fricción en la toma de datos sin comprometer la profundidad analítica.
 
-### 🏗️ Arquitectura Técnica (Flutter)
-La implementación se basa en el SDK de **Flutter**, utilizando un motor de renderizado de alto rendimiento para una experiencia fluida (60 FPS) con una estética de alto contraste.
+### 🧪 ¿Cómo funciona? (Análisis Técnico)
 
-- **Gestión de Estado**: Implementada mediante el patrón **Provider**, asegurando un desacoplamiento eficiente entre la lógica de negocio (`Business Logic`) y la capa de presentación.
-- **Persistencia Local**: Utiliza **SQLite (sqflite)** para una gestión relacional de datos estrictamente local. Esto garantiza latencia cero y una privacidad de datos absoluta.
-- **Análisis de Intensidad (%)**: Integra un algoritmo personalizado de **Carga Media de Sesión** que normaliza el volumen levantado por ejercicio para evitar sesgos por volumen total acumulado.
+#### 1. Motor de Persistencia Asíncrona (SQLite)
+El sistema utiliza una capa de abstracción sobre **SQLite** (`DatabaseService`) que gestiona las transacciones de forma asíncrona. 
+- **Integridad Referencial**: Las rutinas y sesiones están vinculadas mediante claves foráneas rigurosas, asegurando que ningún dato de progreso se pierda o se corrompa.
+- **Cero Latencia**: Al ser exclusivamente local, los tiempos de respuesta son sub-miliseconales, ideales para entornos de alta intensidad.
 
-### 🛠️ Stack Tecnológico
-- **Lenguaje**: Dart 3.x
-- **Framework**: Flutter (v3.22+)
-- **Base de Datos**: SQLite
-- **Visualización**: `fl_chart` (Gráficas de sobrecarga progresiva)
+#### 2. Gestión de Estado Reactiva (Provider)
+Utilizamos el patrón **Provider** para orquestar el flujo de datos:
+- La UI escucha cambios en el `GymProvider`.
+- Cualquier actualización en el volumen o PR (Personal Record) se propaga instantáneamente a través de un bus de eventos reactivo, actualizando gráficas y estadísticas sin recargas costosas.
+
+#### 3. Algoritmo de Carga Inteligente (%)
+Implementamos una lógica de **Normalización de Volumen**. En lugar de sumas escalares, el sistema calcula la intensidad relativa por ejercicio, promediando series y sets para ofrecer una métrica de "Esfuerzo Real" que escala con el progreso del atleta.
 
 ---
 
 <a name="english"></a>
-## 🇺🇸 English Version
+## 🇺🇸 English Version: Training Engineering
 
-### Project Overview
-**GymFlow** is a software architecture engineered for systematic and analytical strength training tracking. This project focuses on data integrity (Local-First), user privacy, and technical performance metric visualization.
+### 💎 Project Philosophy
+**GymFlow** is more than a logger; it's a load management system designed under software engineering principles. The goal is to provide a **Local-First** tool that removes friction in data entry without compromising analytical depth.
 
-### 🏗️ Technical Architecture (Flutter)
-Built on the **Flutter SDK**, utilizing a high-performance rendering engine to ensure a smooth 60 FPS experience with high-contrast UI aesthetics.
+### 🧪 How it Works? (Technical Analysis)
 
-- **State Management**: Implemented using the **Provider** pattern, ensuring efficient decoupling between Business Logic and the Presentation Layer.
-- **Local Persistence**: Uses **SQLite (sqflite)** for strictly local relational data management. This guarantees zero latency and absolute data privacy.
-- **Intensity Analysis (%)**: Integrates a custom **Session Average Load** algorithm that normalizes lifted volume per exercise to avoid biases from accumulated total volume.
+#### 1. Asynchronous Persistence Engine (SQLite)
+The system employs an abstraction layer over **SQLite** (`DatabaseService`) handling transactions asynchronously.
+- **Referential Integrity**: Routines and sessions are linked via rigorous foreign keys, ensuring no progress data is lost or corrupted.
+- **Zero Latency**: Being exclusively local, response times are sub-millisecond, ideal for high-intensity environments.
 
-### 🛠️ Tech Stack
-- **Language**: Dart 3.x
-- **Framework**: Flutter (v3.22+)
-- **Database**: SQLite
-- **Visualization**: `fl_chart` (Progressive overload analytics)
+#### 2. Reactive State Management (Provider)
+We utilize the **Provider** pattern to orchestrate the data flow:
+- The UI listens for changes in the `GymProvider`.
+- Any update in volume or PR (Personal Record) propagates instantly through a reactive event bus, updating charts and stats without costly reloads.
+
+#### 3. Smart Load Algorithm (%)
+We implement **Volume Normalization** logic. Instead of scalar sums, the system calculates relative intensity per exercise, averaging series and sets to offer a "Real Effort" metric that scales with the athlete's progress.
 
 ---
 
