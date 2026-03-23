@@ -2,7 +2,7 @@ import 'dart:convert';
 
 class RoutineSet {
   int reps;
-  String type; // Normal, Calentamiento, Drop Set, Fallo
+  String type; 
 
   RoutineSet({this.reps = 10, this.type = 'Normal'});
 
@@ -43,7 +43,6 @@ class RoutineExercise {
       final decoded = jsonDecode(map['sets_json']) as List;
       setsList = decoded.map((s) => RoutineSet.fromMap(s)).toList();
     } else {
-      // Fallback if old data format (v2/v3)
       setsList = List.generate(map['default_sets'] ?? 3, (i) => RoutineSet(reps: map['default_reps'] ?? 10));
     }
 

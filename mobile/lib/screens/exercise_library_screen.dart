@@ -144,6 +144,10 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> with Sing
             const SizedBox(width: 16),
             Expanded(child: Text(ex.name, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14))),
             IconButton(
+              icon: const Icon(Icons.edit_outlined, color: AppTheme.textSecondary, size: 18),
+              onPressed: () => _showAddDialog(context, gym, initialExercise: ex),
+            ),
+            IconButton(
               icon: const Icon(Icons.delete_outline_rounded, color: AppTheme.textSecondary, size: 18),
               onPressed: () => gym.deleteLibraryExercise(ex.id),
             ),
@@ -153,10 +157,16 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> with Sing
     );
   }
 
-  void _showAddDialog(BuildContext context, GymProvider gym) {
-    String name = '';
-    String muscle = 'Pecho';
-    String category = 'Superior';
+  void _showAddDialog(BuildContext context, GymProvider gym, {LibraryExercise? initialExercise}) {
+    String name = initialExercise?.name ?? '';
+    String muscle = initialExercise?.muscleGroup ?? 'Pierna Completa';
+    String category = initialExercise?.category ?? 'Inferior';
+
+    final muscleGroups = [
+      'Pierna Completa', 'Glúteo', 'Femoral', 'Abductor', 'Aductor', 
+      'Pantorrilla', 'Abdomen', 'Trapecio', 'Bíceps', 'Antebrazo', 
+      'Tríceps', 'Cuádriceps', 'Hombro', 'Espalda', 'Pecho'
+    ];
 
     showDialog(
       context: context,
@@ -169,6 +179,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> with Sing
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
+                controller: TextEditingController(text: name)..selection = TextSelection.fromPosition(TextPosition(offset: name.length)),
                 onChanged: (v) => name = v,
                 decoration: const InputDecoration(labelText: 'Nombre del ejercicio'),
               ),
@@ -180,9 +191,11 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> with Sing
                 decoration: const InputDecoration(labelText: 'Categoría'),
               ),
               const SizedBox(height: 16),
-              TextField(
-                onChanged: (v) => muscle = v,
-                decoration: const InputDecoration(labelText: 'Grupo Muscular (Ej: Cuádriceps)'),
+              DropdownButtonFormField<String>(
+                value: muscle,
+                items: muscleGroups.map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
+                onChanged: (v) => setDialogState(() => muscle = v!),
+                decoration: const InputDecoration(labelText: 'Grupo Muscular'),
               ),
             ],
           ),
@@ -191,10 +204,17 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> with Sing
             ElevatedButton(
               onPressed: () {
                 if (name.isEmpty) return;
-                gym.addLibraryExercise(LibraryExercise(id: const Uuid().v4(), name: name, muscleGroup: muscle, category: category));
+                final newEx = LibraryExercise(
+                  id: initialExercise?.id ?? const Uuid().v4(), 
+                  name: name, 
+                  muscleGroup: muscle, 
+                  category: category
+                );
+                // addLibraryExercise does an UPSERT (replace) if ID exists
+                gym.addLibraryExercise(newEx);
                 Navigator.pop(context);
               },
-              child: const Text('AÑADIR'),
+              child: Text(initialExercise != null ? 'GUARDAR' : 'AÑADIR'),
             ),
           ],
         ),

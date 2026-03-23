@@ -121,10 +121,15 @@ class GymProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Library
+
   Future<void> addLibraryExercise(LibraryExercise ex) async {
     await DatabaseService.instance.insertLibraryExercise(ex);
-    _libraryExercises.add(ex);
+    final idx = _libraryExercises.indexWhere((e) => e.id == ex.id);
+    if (idx >= 0) {
+      _libraryExercises[idx] = ex;
+    } else {
+      _libraryExercises.add(ex);
+    }
     _libraryExercises.sort((a, b) => a.name.compareTo(b.name));
     notifyListeners();
   }
@@ -135,10 +140,16 @@ class GymProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Workouts
+
   Future<void> addWorkout(Workout workout) async {
     await DatabaseService.instance.insertWorkout(workout);
-    _workouts.insert(0, workout);
+    final idx = _workouts.indexWhere((w) => w.id == workout.id);
+    if (idx >= 0) {
+      _workouts[idx] = workout;
+    } else {
+      _workouts.insert(0, workout);
+      _workouts.sort((a, b) => b.date.compareTo(a.date));
+    }
     notifyListeners();
   }
 
@@ -148,7 +159,7 @@ class GymProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Routines
+
   Future<void> addRoutine(Routine routine) async {
     await DatabaseService.instance.insertRoutine(routine);
     final idx = _routines.indexWhere((r) => r.id == routine.id);
