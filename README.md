@@ -1,70 +1,55 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Flutter-Dark.svg" width="80" alt="Flutter" />
-  <h1 align="center">GYMFLOW</h1>
-  <p align="center">
-    <strong>Tu progreso físico no es lineal. Tu constancia sí debe serlo.</strong>
-    <br />
-    <em>La experiencia definitiva en seguimiento de fuerza. 100% Offline. Estética Neon-Premium.</em>
-  </p>
+# 🏋️ GymFlow: High-Performance Strength Tracking System
 
-  ![GymFlow Banner](mobile/assets/images/gymflow_banner.png)
-
-  <p align="center">
-    <img src="https://img.shields.io/badge/Flutter-v3.22+-02569B?style=for-the-badge&logo=flutter&logoColor=white" />
-    <img src="https://img.shields.io/badge/SQLite-Offline-003B57?style=for-the-badge&logo=sqlite&logoColor=white" />
-    <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
-  </p>
-</div>
+[**Español**](#español) | [**English**](#english)
 
 ---
 
-## ⚡️ La Evolución del Entrenamiento
+<a name="español"></a>
+## 🇪🇸 Versión en Español
 
-**GymFlow** no es simplemente otro cuaderno digital. Es un motor de ingeniería diseñado para el **atleta de alto rendimiento**. Con una interfaz inspirada en el *Glassmorphism* y una paleta de colores **Neon Blue & Purple**, GymFlow transforma la tediosa tarea de registrar series en una experiencia visualmente estimulante y fluida.
+### Descripción General
+**GymFlow** es una arquitectura de software diseñada para el registro analítico y sistemático del entrenamiento de fuerza. Este proyecto prioriza la integridad de los datos (Local-First), la privacidad del usuario y la visualización técnica de métricas de rendimiento.
 
-## ✨ Características de Élite
+### 🏗️ Arquitectura Técnica (Flutter)
+La implementación se basa en el SDK de **Flutter**, utilizando un motor de renderizado de alto rendimiento para una experiencia fluida (60 FPS) con una estética de alto contraste.
 
-### 💎 Interfaz Neon-Glassmorphism
-Olvida las apps aburridas. GymFlow utiliza un diseño oscuro profundo con acentos neón que brillan en cada interacción, optimizado para ser usado incluso con las manos sudadas tras un set pesado.
+- **Gestión de Estado**: Implementada mediante el patrón **Provider**, asegurando un desacoplamiento eficiente entre la lógica de negocio (`Business Logic`) y la capa de presentación.
+- **Persistencia Local**: Utiliza **SQLite (sqflite)** para una gestión relacional de datos estrictamente local. Esto garantiza latencia cero y una privacidad de datos absoluta.
+- **Análisis de Intensidad (%)**: Integra un algoritmo personalizado de **Carga Media de Sesión** que normaliza el volumen levantado por ejercicio para evitar sesgos por volumen total acumulado.
 
-### 🧪 Algoritmo de Carga Real (%)
-No inflamos tus números. Nuestro algoritmo exclusivo calcula la **Carga Media de Sesión**:
-- Promedia los pesos por ejercicio (Serie 1: 100kg + Serie 2: 50kg = **75kg Promedio**).
-- Promedia los resultados de todos los ejercicios para darte un **% Real de Esfuerzo de Sesión**.
-
-### 📚 Biblioteca Hiper-Segmentada
-- **Músculos:** De Bíceps a Pantorrilla, todo indexado.
-- **Tipos de Serie Pro:** Descarga Biomecánica, Aproximación, Rest-Pause, Fallo, Biserie y más.
-
-### 🏆 Gamificación y Disciplina
-Sube de rango desde un *Huevo de Pez* hasta convertirte en el legendario **Pez Espada**. Tu racha y tus PRs (Récords Personales) son el motor de tu evolución.
-
-## 🛠️ Stack Tecnológico
-
-GymFlow está construido sobre bases sólidas para garantizar que **tus datos son tuyos**:
-- **Flutter SDK**: Rendimiento nativo de 60FPS.
-- **SQLite (Local-Only)**: Privacidad absoluta. Carga instantánea sin latencia de red.
-- **Provider**: Arquitectura de estado robusta y reactiva.
-- **fl_chart**: Visualización analítica de sobrecarga progresiva.
-
-## 📦 Instalación
-
-Obtén la aplicación para tu Android compilada en su última versión:
-1. Localiza el archivo en: `mobile/build/app/outputs/flutter-apk/app-release.apk`
-2. Instala y domina los fierros.
+### 🛠️ Stack Tecnológico
+- **Lenguaje**: Dart 3.x
+- **Framework**: Flutter (v3.22+)
+- **Base de Datos**: SQLite
+- **Visualización**: `fl_chart` (Gráficas de sobrecarga progresiva)
 
 ---
 
-## 👩‍💻 Créditos y Autoría
+<a name="english"></a>
+## 🇺🇸 English Version
 
-Diseñado, desarrollado y mantenido con pasión por **Anahi Lozano**.
+### Project Overview
+**GymFlow** is a software architecture engineered for systematic and analytical strength training tracking. This project focuses on data integrity (Local-First), user privacy, and technical performance metric visualization.
 
-<p align="center">
-  <a href="https://www.linkedin.com/in/anahi-lozano-de-lira-a4213a187" target="_blank">
-    <img src="https://img.shields.io/badge/LinkedIn-Anahi%20Lozano-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
-  </a>
-</p>
+### 🏗️ Technical Architecture (Flutter)
+Built on the **Flutter SDK**, utilizing a high-performance rendering engine to ensure a smooth 60 FPS experience with high-contrast UI aesthetics.
 
-<p align="center">
-  <em>Desarrollado y mantenido con máxima calidad e ingeniería móvil. © 2026</em>
-</p>
+- **State Management**: Implemented using the **Provider** pattern, ensuring efficient decoupling between Business Logic and the Presentation Layer.
+- **Local Persistence**: Uses **SQLite (sqflite)** for strictly local relational data management. This guarantees zero latency and absolute data privacy.
+- **Intensity Analysis (%)**: Integrates a custom **Session Average Load** algorithm that normalizes lifted volume per exercise to avoid biases from accumulated total volume.
+
+### 🛠️ Tech Stack
+- **Language**: Dart 3.x
+- **Framework**: Flutter (v3.22+)
+- **Database**: SQLite
+- **Visualization**: `fl_chart` (Progressive overload analytics)
+
+---
+
+### 📦 Installation / Instalación
+1. `flutter pub get`
+2. `flutter run`
+3. APK: [`mobile/build/app/outputs/flutter-apk/app-release.apk`](file:///c:/Users/anahy/OneDrive/Escritorio/Proyects/gymflow/mobile/build/app/outputs/flutter-apk/app-release.apk)
+
+**Author / Autor**: **Anahi Lozano (A.B.L.DL)**.
+[LinkedIn](https://www.linkedin.com/in/anahi-lozano-de-lira-a4213a187)
