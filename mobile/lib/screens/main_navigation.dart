@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:gymflow/providers/gym_provider.dart';
 import 'package:gymflow/theme/app_theme.dart';
@@ -359,6 +360,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   )),
+                const SizedBox(height: 60),
+                Center(
+                  child: GestureDetector(
+                    onTap: () async {
+                      final url = Uri.parse('https://www.linkedin.com/in/anahi-lozano-de-lira-a4213a187');
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                      }
+                    },
+                    child: Text(
+                      'A.B.L.DL (C)', 
+                      style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 2)
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
               ]),
             ),
           ),

@@ -79,7 +79,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 24),
                         child: Text(
                           'A.B.L.DL (C)', 
-                          style: TextStyle(color: AppTheme.textSecondary.withOpacity(0.6), fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5)
+                          style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 2)
                         ),
                       ),
                     ),
